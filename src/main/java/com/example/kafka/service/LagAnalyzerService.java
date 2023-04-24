@@ -54,6 +54,8 @@ public class LagAnalyzerService {
 			String topic = lagEntry.getKey().topic();
 			int partition = lagEntry.getKey().partition();
 			Long lag = lagEntry.getValue();
+			//Elastic Save Data into Elastic.
+			//If Thredhold Cross -> Email 
 			System.err.println("Time="+ MonitoringUtil.time()+" | Lag for topic = "+topic+", partition = "+partition+", groupId = "+groupId+" is "+lag );
 		}
 	}
