@@ -19,6 +19,11 @@ public class ClusterInfo {
 	String clustername;
 	int monitoringstatus;
 
+	String zookeeper_servers;
+	String bootstrap_servers;
+	String zoo_logs_dir; 
+	String broker_logs_dir;
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "clusterid")
 	List<KafkaEntity> kafkaEntity;
@@ -55,23 +60,63 @@ public class ClusterInfo {
 		this.kafkaEntity = kafkaEntity;
 	}
 
-	public ClusterInfo(int clusterid, String clustername, int monitoringstatus, List<KafkaEntity> kafkaEntity) {
-		super();
-		this.clusterid = clusterid;
-		this.clustername = clustername;
-		this.monitoringstatus = monitoringstatus;
-		this.kafkaEntity = kafkaEntity;
-	}
-
+	
 	public ClusterInfo() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	public ClusterInfo(int clusterid, String clustername, int monitoringstatus, String zookeeper_servers,
+			String bootstrap_servers, String zoo_logs_dir, String broker_logs_dir, List<KafkaEntity> kafkaEntity) {
+		super();
+		this.clusterid = clusterid;
+		this.clustername = clustername;
+		this.monitoringstatus = monitoringstatus;
+		this.zookeeper_servers = zookeeper_servers;
+		this.bootstrap_servers = bootstrap_servers;
+		this.zoo_logs_dir = zoo_logs_dir;
+		this.broker_logs_dir = broker_logs_dir;
+		this.kafkaEntity = kafkaEntity;
+	}
+
+	public String getZookeeper_servers() {
+		return zookeeper_servers;
+	}
+
+	public void setZookeeper_servers(String zookeeper_servers) {
+		this.zookeeper_servers = zookeeper_servers;
+	}
+
+	public String getBootstrap_servers() {
+		return bootstrap_servers;
+	}
+
+	public void setBootstrap_servers(String bootstrap_servers) {
+		this.bootstrap_servers = bootstrap_servers;
+	}
+
+	public String getZoo_logs_dir() {
+		return zoo_logs_dir;
+	}
+
+	public void setZoo_logs_dir(String zoo_logs_dir) {
+		this.zoo_logs_dir = zoo_logs_dir;
+	}
+
+	public String getBroker_logs_dir() {
+		return broker_logs_dir;
+	}
+
+	public void setBroker_logs_dir(String broker_logs_dir) {
+		this.broker_logs_dir = broker_logs_dir;
+	}
+
 	@Override
 	public String toString() {
 		return "ClusterInfo [clusterid=" + clusterid + ", clustername=" + clustername + ", monitoringstatus="
-				+ monitoringstatus + ", kafkaEntity=" + kafkaEntity + "]";
+				+ monitoringstatus + ", zookeeper_servers=" + zookeeper_servers + ", bootstrap_servers="
+				+ bootstrap_servers + ", zoo_logs_dir=" + zoo_logs_dir + ", broker_logs_dir=" + broker_logs_dir
+				+ ", kafkaEntity=" + kafkaEntity + "]";
 	}
 
 }

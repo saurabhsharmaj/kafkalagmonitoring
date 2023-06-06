@@ -29,7 +29,7 @@ public class KafkaEntity {
 	@Column(name = "monitoringstatus")
 	int monitoringstatus;
 	@Column(name = "timestamp")
-	int timestamp;
+	Integer timestamp;
 
 	// Generating Getter Setter
 	public int getGroupid() {
@@ -98,11 +98,11 @@ public class KafkaEntity {
 		this.monitoringstatus = monitoringstatus;
 	}
 
-	public int getTimestamp() {
+	public Integer getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(int timestamp) {
+	public void setTimestamp(Integer timestamp) {
 		this.timestamp = timestamp;
 	}
 
