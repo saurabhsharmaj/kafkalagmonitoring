@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #fff;
+  }
+   
+  .normal{
+    display: flex;
+  }
+  .container{
+    max-width: 100% !important;
+  }
+  
+
+
+  .design-form{
+    margin-top: 1%;
+  }  
+  
+  .field_margins{
+    margin-top: 1%;
+  }
+   .kafkaEntitySubmit_button{
+      width: 10%;
+      height: 15%;
+      margin-top: 45px !important;
+
+  } 
+  
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+  
+  

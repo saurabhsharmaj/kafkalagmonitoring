@@ -1,0 +1,18 @@
+.add_entity{
+    font-weight: bold;
+    width: 13% !important;
+    height: 50px;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+    margin-left: 15px !important;
+    background-color: #F8C471 
+    ;
+  
+  
+  }
+
+.icon_click{
+  cursor: pointer;
+}
