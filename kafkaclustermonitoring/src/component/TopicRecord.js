@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './KafkaRecord.css';
 import NavBar from "./Navbar";
 import { Link, useParams} from 'react-router-dom';
-import { FaTrash,FaEye } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import applicationService from '../sevices/application.service';
 import axios from 'axios';
 
@@ -11,13 +11,11 @@ const TopicList = () => {
     const [TopicRecord, setTopicRecord] = useState([]);
   
     const params = useParams();
-    alert(params);
     // const init = clusterid => {
-    //     console.log("jiankdsnldsjjf");
     //         applicationService.gettopiccluster(clusterid)
     //         .then(response => {
     //         console.log('Printing Topic data', response.data);  
-    //         setTopicRecord(response.data);         0  
+    //         setTopicRecord(response.data);
     //       })
     //       .catch(error => {
     //         console.log('Something went wrong', error);
@@ -54,7 +52,6 @@ const TopicList = () => {
         
 
     useEffect(()=> {
-        alert(console.log('hfhsdjfhsdkjhf',params.id));
         axios.get(applicationService.gettopiccluster(`${params.id}`))
         .then(res => {
             console.log(res)
@@ -71,7 +68,7 @@ const TopicList = () => {
             applicationService.remove(groupid)
             .then(response => {
             console.log(response.data);
-//            init();            
+            init();            
           })
           .catch(error => {
             console.log('Something went wrong', error);

@@ -43,7 +43,7 @@ const Clusterinfo = () => {
                 console.log('something went wroing', error);
             })
     }
-
+    window.location.href = "/clusterinfo";
   }
 
   useEffect(() => {
@@ -62,8 +62,6 @@ const Clusterinfo = () => {
             })
     }
  }, [])
-
-
 
   return (
     <>

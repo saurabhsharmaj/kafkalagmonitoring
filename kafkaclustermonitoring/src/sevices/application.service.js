@@ -17,8 +17,12 @@ const update = data => {
 }
 
 const remove = id => {
-    return httpClient.delete(`/deletetopic/${id}`);
+    return httpClient.delete(`/clusterdelete/${id}`);
 }
+
+// const removecluster = id => {
+//     return httpClient.delete(`/clusterdelete/${id}`);
+// }
 
 // const getTopic =id=>  {
 //     return httpClient.get(`/gettopicdetails/${id}`);
