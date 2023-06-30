@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.example.kafka.cmd.CommandPromptApplication;
 import com.example.kafka.service.LagAnalyzerService;
 
 @SpringBootApplication
@@ -16,8 +17,13 @@ public class KafkaApplication {
 		SpringApplication.run(KafkaApplication.class, args);
 	}
 
-	@Bean(initMethod="runAfterObjectCreated")
-    public LagAnalyzerService getFunnyBean() {
-        return new LagAnalyzerService();
+	@Bean(initMethod="executeCommandPeriodically")
+	public CommandPromptApplication getFunnyBean1() {
+        return new CommandPromptApplication();
     }
+	
+//	@Bean(initMethod="runAfterObjectCreated")
+//    public LagAnalyzerService getFunnyBean() {
+//        return new LagAnalyzerService();
+//    }
 }

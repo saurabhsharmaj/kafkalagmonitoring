@@ -2,13 +2,14 @@ package com.example.kafka.service;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+
+import javax.transaction.Transactional;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -27,16 +28,17 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.example.kafka.entity.ElasticEntity;
 import com.example.kafka.entity.KafkaEntity;
 import com.example.kafka.mail.SendMailByGmail;
+import com.example.kafka.repository.ClusterRepo;
 import com.example.kafka.repository.ElasticRepo;
-import com.example.kafka.entity.ElasticEntity;
 import com.example.kafka.repository.KafkaRepository;
 
 @Service
+@Transactional
 public class LagAnalyzerService {
 	Logger LOGGER = LoggerFactory.getLogger(LagAnalyzerService.class);
 
@@ -44,96 +46,76 @@ public class LagAnalyzerService {
 	KafkaRepository kafkarepository;
 	
 	@Autowired
+	ClusterRepo clusterRepo;
+	
+	@Autowired
 	SendMailByGmail sendmailbygmail;
 	
 	@Autowired
     private ElasticRepo elasticRepo;
-
+	
 	int id = 1;
-	private final AdminClient adminClient;
-	private final Producer<String,String> producer;
-    private KafkaConsumer<String, String> kafkaConsumer;
-
-    @Autowired
-    public LagAnalyzerService(@Value("${monitor.kafka.bootstrap.config}") String bootstrapServerConfig) {
-        adminClient = getAdminClient(bootstrapServerConfig);
-        producer = getProducer(bootstrapServerConfig);
-        kafkaConsumer = getKafkaConsumer(bootstrapServerConfig);
-    }
     
-    public LagAnalyzerService()
-    {
-    	adminClient = null;
-    	producer = null;
-    	kafkaConsumer = null;
-    }
+    public LagAnalyzerService(){}
     
     private void runAfterObjectCreated()
     {
     	List<String> topic = kafkarepository.getAllTopicNames();
+    	List<String> servers = kafkarepository.getAllBootstrapServers();
 		for(int i=0;i<topic.size();i++)
 		{
-			KafkaEntity kafkaEntity = kafkarepository.findByTopicname(topic.get(i));
+			KafkaEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic.get(i), servers.get(i));
 			kafkaEntity.setTimestamp(-1);
 			kafkarepository.save(kafkaEntity);
 		}
     }
     
-	private AdminClient getAdminClient(String bootstrapServerConfig) {
-		if (adminClient == null) {
+	private AdminClient getAdminClient(String bootstrapServer) {
 			Properties config = new Properties();
-			config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
+			config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
 			return AdminClient.create(config);
-		} else
-			return adminClient;
 	}
 	
-	private Producer<String,String> getProducer(String bootstrapServerConfig)
-	{
-		if(producer == null)
-		{
-			Properties props = new Properties();
-			  props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
-		      props.put("acks", "all"); 
-		      props.put("retries", 0);	      
-		      props.put("batch.size", 16384);		      
-		      props.put("linger.ms", 1);	      
-		      props.put("buffer.memory", 33554432);      
-		      props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
-		      props.put("value.serializer","org.apache.kafka.common.serialization.StringSerializer");
-		      Producer<String, String> producer = new KafkaProducer
-		         <String, String>(props);
-		      return producer;
-		}
-		else
-			return producer;
+	private KafkaConsumer<String, String> getKafkaConsumer(String consumerGroup,String bootstrapServer) {
+			Properties properties = new Properties();
+			properties.setProperty("group.id",consumerGroup);
+			properties.setProperty("bootstrap.servers", bootstrapServer);
+			properties.setProperty("enable.auto.commit", "true");
+			properties.setProperty("auto.commit.interval.ms", "1000");
+			properties.setProperty("session.timeout.ms", "30000");
+			properties.setProperty("max.poll.interval.ms", "3000");
+			properties.setProperty("max.poll.records", "500");
+			properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+			properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+			return new KafkaConsumer<>(properties);
 	}
 
-	public void analyzeLag(String groupId) throws ExecutionException, InterruptedException {
-		Map<TopicPartition, Long> consumerGrpOffsets = getConsumerGrpOffsets(groupId);
-		Map<TopicPartition, Long> producerOffsets = getProducerOffsets(consumerGrpOffsets);
+	public void analyzeLag(String groupId,String bootstrapServer,String clusterName) throws ExecutionException, InterruptedException {
+		Map<TopicPartition, Long> consumerGrpOffsets = getConsumerGrpOffsets(groupId,bootstrapServer);
+		Map<TopicPartition, Long> producerOffsets = getProducerOffsets(consumerGrpOffsets,groupId,bootstrapServer);
 		Map<TopicPartition, Long> lags = computeLags(consumerGrpOffsets, producerOffsets);
 		for (Map.Entry<TopicPartition, Long> lagEntry : lags.entrySet()) {
 			String topic = lagEntry.getKey().topic();
 			int partition = lagEntry.getKey().partition();
 			Long lag = lagEntry.getValue();
-			
-			ElasticEntity elasticEntity = new ElasticEntity(id, topic, partition, lag);
+			String clustername = clusterRepo.clusterElastic(topic);
+			ElasticEntity elasticEntity = new ElasticEntity(id, topic, partition, lag, clustername);
 			elasticRepo.save(elasticEntity);
 			
-			KafkaEntity kafkaEntity = kafkarepository.findByTopicname(topic);
+			KafkaEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic, bootstrapServer);
+			System.out.println(kafkaEntity.getTopicname()+" "+kafkaEntity.getTimestamp());
 			int minutes = Integer.parseInt(DateTimeFormatter.ofPattern("mm").format(LocalTime.now()));
+
 			int noOfMinutes = (minutes - kafkaEntity.getTimestamp());
-			if(lag>=kafkaEntity.getThreshold() && ( noOfMinutes == 30 || noOfMinutes == -30 || (kafkaEntity.getTimestamp() == -1)))
+			if(lag>=kafkaEntity.getThreshold() && ( noOfMinutes == 3 || noOfMinutes == -3 || (kafkaEntity.getTimestamp() == -1)))
  			{
- 				sendmailbygmail.sendMail(kafkaEntity,lag);
+ 				sendmailbygmail.sendMail(kafkaEntity,lag,clusterName);
  				int timestamp = Integer.parseInt(DateTimeFormatter.ofPattern("mm").format(LocalTime.now()));
  				kafkaEntity.setTimestamp(timestamp);
  				kafkarepository.save(kafkaEntity);
- 			}
-			
-			++id;
-			
+ 			}			
+			++id;		
+			clustername = "";
 			System.err.println("Time="+ MonitoringUtil.time()+" | Lag for topic = "+topic+", partition = "+partition+", groupId = "+groupId+" is "+lag );
 		}
 	}
@@ -150,33 +132,19 @@ public class LagAnalyzerService {
 		return lags;
 	}
 
-	private Map<TopicPartition, Long> getProducerOffsets(Map<TopicPartition, Long> consumerGrpOffset) {
+	private Map<TopicPartition, Long> getProducerOffsets(Map<TopicPartition, Long> consumerGrpOffset,String groupId,String bootstrapServer) {
 		List<TopicPartition> topicPartitions = new LinkedList<>();
 		for (Map.Entry<TopicPartition, Long> entry : consumerGrpOffset.entrySet()) {
 			TopicPartition key = entry.getKey();
 			topicPartitions.add(new TopicPartition(key.topic(), key.partition()));
 		}
+		KafkaConsumer<String, String> kafkaConsumer = getKafkaConsumer(groupId,bootstrapServer);
 		return kafkaConsumer.endOffsets(topicPartitions);
 	}
 
-	private KafkaConsumer<String, String> getKafkaConsumer(String bootstrapServerConfig) {
-		if (kafkaConsumer == null) {
-			Properties properties = new Properties();
-			properties.setProperty("group.id", "Apple");
-			properties.setProperty("enable.auto.commit", "true");
-			properties.setProperty("auto.commit.interval.ms", "1000");
-			properties.setProperty("session.timeout.ms", "30000");
-			properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServerConfig);
-			properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-			properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-			return new KafkaConsumer<>(properties);
-		} else
-			return kafkaConsumer;
-
-	}
-
-	private Map<TopicPartition, Long> getConsumerGrpOffsets(String groupId)
+	private Map<TopicPartition, Long> getConsumerGrpOffsets(String groupId,String bootstrapServer)
 			throws ExecutionException, InterruptedException {
+		AdminClient adminClient = getAdminClient(bootstrapServer);
 		ListConsumerGroupOffsetsResult info = adminClient.listConsumerGroupOffsets(groupId);
 		Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataMap = info.partitionsToOffsetAndMetadata()
 				.get();
@@ -192,28 +160,28 @@ public class LagAnalyzerService {
 	
 	int count=0;
 	
-	public void pData(String topicName,String clusterName) throws InterruptedException
+	public void pData(String topicName,String clusterName,String bootstrapServer) throws InterruptedException
 	{
+		Producer<String,String> producer;
+		Properties props = new Properties();
+		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+	    props.put("acks", "all"); 
+	    props.put("retries", 0);	      
+	    props.put("batch.size", 16384);		      
+	    props.put("linger.ms", 1);	      
+	    props.put("buffer.memory", 33554432);      
+	    props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
+	    props.put("value.serializer","org.apache.kafka.common.serialization.StringSerializer");
+	    producer = new KafkaProducer<String, String>(props);
 		producer.send(new ProducerRecord<String, String>( topicName,
 	            Integer.toString(count++), Integer.toString(count++)));
 	               System.out.println("Message sent successfully for " + topicName + " from " + clusterName + " cluster ");
 	               Thread.sleep(1000);
 	}
 	
-	public void cData(List<String> topics,String consumerName,String clusterName)
+	public void cData(List<String> topics,String consumerName,String clusterName,String bootstrapServer)
 	{
-		Properties properties = new Properties();
-		properties.setProperty("group.id",consumerName);
-		properties.setProperty("bootstrap.servers", "localhost:9092");
-		properties.setProperty("enable.auto.commit", "true");
-		properties.setProperty("auto.commit.interval.ms", "1000");
-		properties.setProperty("session.timeout.ms", "30000");
-		properties.setProperty("max.poll.interval.ms", "3000");
-		properties.setProperty("max.poll.records", "500");
-		properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-		properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-		kafkaConsumer = new KafkaConsumer<>(properties);
-		
+		KafkaConsumer<String, String> kafkaConsumer = getKafkaConsumer(consumerName,bootstrapServer);
 		kafkaConsumer.subscribe(topics);	
 		System.out.println("Subscribed to topic " + topics + " from " + clusterName + " cluster for " + consumerName + " consumer ");
 	    try
