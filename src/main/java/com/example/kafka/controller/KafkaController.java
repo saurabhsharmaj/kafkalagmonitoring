@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,70 @@ public class KafkaController {
 	private ClusterRepo clusterRepo;
 	
 	@Autowired
-	private KafkaEntityService kafkaEntityService;
+	private KafkaEntityService kafkaEntityService; 
+	
+	//getting all clusterdetails
+	@GetMapping("/getclusterdetails")
+	public List<ClusterInfo> getclusterdetails(){
+		return clusterRepo.findAll();
+	}
+	
+	
+	//getting all topicdetails
+	@GetMapping("/gettopicdetails")
+	public List<KafkaEntity> gettopicdetails()
+	{
+		List<KafkaEntity> list = new ArrayList<>();
+		if(kafkarepository.findAll().isEmpty())
+			throw new ResourceNotFoundException();
+		else
+	
+		{
+			kafkarepository.findAll().forEach(list::add);
+			return list;
+		}
+	}
+	
+	//getting information based on clusterid
+	@GetMapping("/cluster/{clusterid}")
+	public ClusterInfo getClusterById(@PathVariable int clusterid) {
+		return clusterRepo.findById(clusterid).get();
+	}
+	
+	@GetMapping("/kafkadetails/{groupid}")
+	public KafkaEntity getKafkaById(@PathVariable int groupid) {
+		return kafkarepository.findById(groupid).get();
+	}
+	
+	//getting topic details according clusterid
+	@GetMapping("/gettopicdata/{clusterid}")
+	public List<KafkaEntity> getTopicCluster(@PathVariable int clusterid) {
+		List<KafkaEntity> list = new ArrayList<>();
+		list = kafkarepository.findByClusterid(clusterid);
+		return list;		
+	}
+	
+	@GetMapping("/kafka/clustername")
+	public List<String> getKafkaClustername(){
+		List<String> list = clusterRepo.getKafkaClusterName();
+		return list;
+		
+	}
+	
+	@GetMapping("/kafka/{groupid}")
+	public ResponseEntity<KafkaEntity> getByGroupid(@PathVariable Integer groupid)
+	{
+		Optional<KafkaEntity> ent = kafkarepository.findById(groupid);
+		if(ent.isPresent())
+		{
+			return new ResponseEntity<KafkaEntity>(ent.get(),HttpStatus.FOUND);
+		}
+		else
+		{
+			throw new ResourceNotFoundException();
+		}
+	}
+	
 	
 	@PostMapping("/uploadfile")
 	public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file){
@@ -57,13 +122,23 @@ public class KafkaController {
 		message = "Please upload a csv file!";
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
 	  }	
-		
-	@PostMapping("/kafka")
+	
+	//adding details for cluster
+	@PostMapping("/postclusterdetails")
+	public String postData(@RequestBody ClusterInfo clusterInfo) {
+		clusterRepo.save(clusterInfo);
+		return "Data Successfully added";
+	}
+	
+	
+	//adding details for topic
+	@PostMapping("/post/kafka")
 	public ResponseEntity<String> createLagMonitoring(@RequestBody KafkaEntity entities)
 	{
 		if(entities.getConsumergroup().isEmpty()||entities.getDescription().isEmpty()||entities.getEmailid().isEmpty()||entities.getOwner().isEmpty()
-				||entities.getTopicname().isEmpty())
-			throw new FillDataException();
+				||entities.getTopicname().isEmpty()) {
+
+			throw new FillDataException();}
 		else
 		{	
 			kafkarepository.save(entities);
@@ -71,41 +146,37 @@ public class KafkaController {
 		}
 	}
 	
-	@GetMapping("/kafka")
-	public List<KafkaEntity> getLagMonitoring()
-	{
-		List<KafkaEntity> list = new ArrayList<>();
-		if(kafkarepository.findAll().isEmpty())
-			throw new ResourceNotFoundException();
-		else
-		{
-			kafkarepository.findAll().forEach(list::add);
-			return list;
+	//update details for cluster
+	@PutMapping("/updateclusterdetails")
+	public ResponseEntity<String> updateByid(@RequestBody ClusterInfo clusterinfo) {
+		Optional<ClusterInfo> find = clusterRepo.findById(clusterinfo.getClusterid());
+		if (find.isPresent()) {
+			ClusterInfo update = find.get();
+
+			update.setClustername(clusterinfo.getClustername());
+			update.setMonitoringstatus(clusterinfo.getMonitoringstatus());
+			update.setZoo_logs_dir(clusterinfo.getZoo_logs_dir());
+			update.setBootstrap_servers(clusterinfo.getBootstrap_servers());
+			update.setBroker_logs_dir(clusterinfo.getBroker_logs_dir());
+			update.setZookeeper_servers(clusterinfo.getZookeeper_servers());
+
+			clusterRepo.save(update);
+
+			return ResponseEntity.ok("Detail Updated");
+		} else {
+			return ResponseEntity.ok("Detail Not Found");
 		}
+
 	}
-	@GetMapping("/kafka/{groupid}")
-	public ResponseEntity<KafkaEntity> getByGroupid(@PathVariable Integer groupid)
+
+	@PutMapping("/kafkadetailsupdate")
+	public String updateByid(@RequestBody KafkaEntity entities)
 	{
-		Optional<KafkaEntity> ent = kafkarepository.findById(groupid);
-		if(ent.isPresent())
-		{
-			return new ResponseEntity<KafkaEntity>(ent.get(),HttpStatus.FOUND);
-		}
-		else
-		{
-			throw new ResourceNotFoundException();
-		}
-	}
-	
-	@PutMapping("/kafka/{groupid}")
-	public String updateByid(@PathVariable Integer groupid,@RequestBody KafkaEntity entities)
-	{
-		Optional<KafkaEntity> find = kafkarepository.findById(groupid);
+		Optional<KafkaEntity> find = kafkarepository.findById(entities.getGroupid());
 		if(find.isPresent())
 		{
 			KafkaEntity update = find.get();
 			
-			update.setGroupid(entities.getGroupid());
 			update.setOwner(entities.getOwner());
 			update.setEmailid(entities.getEmailid());
 			update.setDescription(entities.getDescription());
@@ -113,6 +184,7 @@ public class KafkaController {
 			update.setConsumergroup(entities.getConsumergroup());
 			update.setThreshold(entities.getThreshold());
 			update.setMonitoringstatus(entities.getMonitoringstatus());
+			update.setClusterid(entities.getClusterid());
 			
 			kafkarepository.save(update);
 			
@@ -122,17 +194,36 @@ public class KafkaController {
 		{
 			throw new ResourceNotFoundException();
 		}
-		
-				
+						
 	}
 	
-	@DeleteMapping("/kafka/{groupid}")
-	public ResponseEntity<String> deleteById(@PathVariable Integer groupid )
+	//delete cluster with related topic
+	@DeleteMapping("/clusterdelete/{id}")
+	@Transactional
+	public String deleteById(@PathVariable int id)
 	{
-		if(kafkarepository.findById(groupid).isPresent())
+		if(true)
 		{
-			kafkarepository.deleteById(groupid);
-			return ResponseEntity.ok("Data Deleted !!");
+			kafkarepository.deleteByClusterid(id)
+;
+			clusterRepo.deleteById(id)
+;
+			return "Data Deleted";
+		}
+		else
+			throw new ResourceNotFoundException();
+	}
+	
+	//delete topic by id
+	@DeleteMapping("/deletetopic/{id}")
+	@Transactional
+	public String deleteByGroupId(@PathVariable int id)
+	{
+		if(true)
+		{
+			kafkarepository.deleteById(id)
+;
+			return "Data Deleted";
 		}
 		else
 			throw new ResourceNotFoundException();
@@ -160,57 +251,11 @@ public class KafkaController {
 		return ResponseEntity.ok("Data updated !!");
 	}
 
-	// cluster apis
-
-		@PostMapping("/clusterinfo")
-		public String createCluster(@RequestBody List<ClusterInfo> cluster) {
-
-			clusterRepo.saveAll(cluster);
-			return "Data Created Successfully";
-		}
-
-		@GetMapping("/clusterinfo")
-		public List<ClusterInfo> getClusterInfo() {
-			List<ClusterInfo> list = new ArrayList<>();
-			list = clusterRepo.findAll();
-			return list;
-		}
-
-//		get cluster by id
-		@GetMapping("/clusterinfo/{clusterid}")
-		public ResponseEntity<ClusterInfo> getClusterInfoByClusterId(@PathVariable int clusterid) {
-			Optional<ClusterInfo> ent = clusterRepo.findById(clusterid);
-			if (ent.isPresent()) {
-				return new ResponseEntity<ClusterInfo>(ent.get(), HttpStatus.FOUND);
-			} else {
-				return new ResponseEntity<ClusterInfo>(HttpStatus.NOT_FOUND);
-			}
-		}
-
-//		update cluster by id
-		@PutMapping("/updatecluster/{clusterid}")
-		public ResponseEntity<String> updateByid(@PathVariable Integer clusterid, @RequestBody ClusterInfo clusterinfo) {
-			Optional<ClusterInfo> find = clusterRepo.findById(clusterid);
-			if (find.isPresent()) {
-				ClusterInfo update = find.get();
-
-				update.setClustername(clusterinfo.getClustername());
-				update.setMonitoringstatus(clusterinfo.getMonitoringstatus());
-
-				clusterRepo.save(update);
-
-				return ResponseEntity.ok("Detail Updated");
-			} else {
-				return ResponseEntity.ok("Detail Not Found");
-			}
-
-		}
-
-//		Delete by cluster id
-		@DeleteMapping("/deletecluster/{clusterid}")
-		public ResponseEntity<String> deleteById1(@PathVariable Integer clusterid) {
-			clusterRepo.deleteById(clusterid);
-
-			return ResponseEntity.ok("Deleted");
-		}
+	
+	@GetMapping("/getclustername")
+	public List<String> getClusterName() {
+		List<String> list1 = clusterRepo.getAllClusterNameReact();
+		return list1;
+	}
+		
 }
