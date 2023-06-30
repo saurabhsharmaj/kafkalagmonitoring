@@ -10,6 +10,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.kafka.entity.KafkaEntity;
@@ -17,12 +18,14 @@ import com.example.kafka.entity.KafkaEntity;
 @Service
 public class  SendMailByGmail 
 {	
-	public void sendMail(KafkaEntity kafkaEntity,Long lag) { 
+	@Value("${user.mailid.config}")
+	String user;
+	@Value("${user.password.config}")
+	String password;
+	public void sendMail(KafkaEntity kafkaEntity,Long lag,String clusterName) { 
 		  
 		  String host="smtp.gmail.com";
 		  String port ="587";
-		  final String user="mkroks21my15@gmail.com";//change accordingly  
-		  final String password="dckrxarlhrybpqui";//change accordingly  
 		    
 		  String to=kafkaEntity.getEmailid();  
 		  
@@ -44,13 +47,13 @@ public class  SendMailByGmail
 			     message.setFrom(new InternetAddress(user));  
 			     message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
 			     message.setSubject("Lag Exceeds");  
-			     message.setText("Topic name         : "+kafkaEntity.getTopicname()+"\n"+"Threshold value  : "+kafkaEntity.getThreshold()+"\n"+"Lag value            : "+lag+"\n"+
+			     message.setText("Cluster name       : "+clusterName+"\n"+"Topic name         : "+kafkaEntity.getTopicname()+"\n"+"Threshold value  : "+kafkaEntity.getThreshold()+"\n"+"Lag value            : "+lag+"\n"+
 			     "Consumer group : "+kafkaEntity.getConsumergroup()+"\n"+"Owner                 : "+ kafkaEntity.getOwner());  
 			       
 			    //send the message  
 			     Transport.send(message);  
 			  
-			     System.out.println("message sent successfully...");  
+			     System.out.println("\n"+"<<<<<<<<<<<<<<<<<<<<<<<<<<<Message sent SUCCESSFULLY for "+clusterName+" Cluster And "+kafkaEntity.getTopicname()+" Topic.>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+"\n");  
 			   
 			     } catch (MessagingException e) {e.printStackTrace();}  	
 	}

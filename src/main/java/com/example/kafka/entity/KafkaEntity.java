@@ -29,89 +29,72 @@ public class KafkaEntity {
 	@Column(name = "monitoringstatus")
 	int monitoringstatus;
 	@Column(name = "timestamp")
-	Integer timestamp;
-
-	// Generating Getter Setter
+	int timestamp;
+	@Column(name="clusterid")
+	int clusterid;
 	public int getGroupid() {
 		return groupid;
 	}
-
 	public void setGroupid(int groupid) {
 		this.groupid = groupid;
 	}
-
-	
-
 	public String getEmailid() {
 		return emailid;
 	}
-
 	public void setEmailid(String emailid) {
 		this.emailid = emailid;
 	}
-
 	public String getOwner() {
 		return owner;
 	}
-
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 	public String getTopicname() {
 		return topicname;
 	}
-
 	public void setTopicname(String topicname) {
 		this.topicname = topicname;
 	}
-
 	public String getConsumergroup() {
 		return consumergroup;
 	}
-
 	public void setConsumergroup(String consumergroup) {
 		this.consumergroup = consumergroup;
 	}
-
 	public int getThreshold() {
 		return threshold;
 	}
-
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
-
 	public int getMonitoringstatus() {
 		return monitoringstatus;
 	}
-
 	public void setMonitoringstatus(int monitoringstatus) {
 		this.monitoringstatus = monitoringstatus;
 	}
-
-	public Integer getTimestamp() {
+	public int getTimestamp() {
 		return timestamp;
 	}
-
-	public void setTimestamp(Integer timestamp) {
+	public void setTimestamp(int timestamp) {
 		this.timestamp = timestamp;
 	}
-
-	// Constructor Using Fields
-
-	public KafkaEntity(int groupid, String emailid, String owner, String description, String topicname,
-			String consumergroup, int threshold, int monitoringstatus) {
+	public int getClusterid() {
+		return clusterid;
+	}
+	public void setClusterid(int clusterid) {
+		this.clusterid = clusterid;
+	}
+	public KafkaEntity(String emailid, String owner, String description, String topicname,
+			String consumergroup, int threshold, int monitoringstatus, int timestamp, int clusterid) {
 		super();
-		this.groupid = groupid;
 		this.emailid = emailid;
 		this.owner = owner;
 		this.description = description;
@@ -119,24 +102,20 @@ public class KafkaEntity {
 		this.consumergroup = consumergroup;
 		this.threshold = threshold;
 		this.monitoringstatus = monitoringstatus;
+		this.timestamp = timestamp;
+		this.clusterid = clusterid;
 	}
-	
-
-	// Constructor Using Superclass
 
 	public KafkaEntity() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
-
-	// To String
-
 	@Override
 	public String toString() {
-		return "Entities [groupid=" + groupid + ", emailid=" + emailid + ", owner=" + owner + ", description="
+		return "KafkaEntity [groupid=" + groupid + ", emailid=" + emailid + ", owner=" + owner + ", description="
 				+ description + ", topicname=" + topicname + ", consumergroup=" + consumergroup + ", threshold="
-				+ threshold + ", monitoringstatus=" + monitoringstatus + "]";
+				+ threshold + ", monitoringstatus=" + monitoringstatus + ", timestamp=" + timestamp + ", clusterid="
+				+ clusterid + "]";
 	}
-
-
+	
+	
 }

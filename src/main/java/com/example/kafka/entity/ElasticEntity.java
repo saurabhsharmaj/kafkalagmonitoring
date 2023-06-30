@@ -15,6 +15,8 @@ public class ElasticEntity {
 	private int partition;
 	
 	private long lags;
+	
+	private String clustername;
 
 	public int getId() {
 		return id;
@@ -48,18 +50,29 @@ public class ElasticEntity {
 		this.lags = lags;
 	}
 
-	public ElasticEntity(int id, String topic, int partition, long lags) {
+	
+	public String getClustername() {
+		return clustername;
+	}
+
+	public void setClustername(String clustername) {
+		this.clustername = clustername;
+	}
+
+	public ElasticEntity(int id, String topic, int partition, long lags, String clustername) {
 		super();
 		this.id = id;
 		this.topic = topic;
 		this.partition = partition;
 		this.lags = lags;
+		this.clustername = clustername;
 	}
 
 	@Override
 	public String toString() {
-		return "ElasticEntity [id=" + id + ", topic=" + topic + ", partition=" + partition + ", lags=" + lags + "]";
+		return "ElasticEntity [id=" + id + ", topic=" + topic + ", partition=" + partition + ", lags=" + lags
+				+ ", clustername=" + clustername + "]";
 	}
+
 		
-	
 }

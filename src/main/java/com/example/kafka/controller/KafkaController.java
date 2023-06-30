@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.kafka.csvHelper.CSVHelper;
 import com.example.kafka.entity.ClusterInfo;
 import com.example.kafka.entity.KafkaEntity;
 import com.example.kafka.exception.FillDataException;
 import com.example.kafka.exception.ResourceNotFoundException;
+import com.example.kafka.kafkaEntityService.KafkaEntityService;
+import com.example.kafka.message.ResponseMessage;
 import com.example.kafka.repository.ClusterRepo;
 import com.example.kafka.repository.KafkaRepository;
 
@@ -31,6 +35,28 @@ public class KafkaController {
 	
 	@Autowired
 	private ClusterRepo clusterRepo;
+	
+	@Autowired
+	private KafkaEntityService kafkaEntityService;
+	
+	@PostMapping("/uploadfile")
+	public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file){
+		String message = "";
+		
+		if(CSVHelper.hasCSVFormat(file)) {
+			try {
+				kafkaEntityService.save(file);
+				message = "Uploaded the file successfully: " + file.getOriginalFilename();
+				 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+			}
+			catch (Exception e) {
+				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+			}
+		}
+		message = "Please upload a csv file!";
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+	  }	
 		
 	@PostMapping("/kafka")
 	public ResponseEntity<String> createLagMonitoring(@RequestBody KafkaEntity entities)
