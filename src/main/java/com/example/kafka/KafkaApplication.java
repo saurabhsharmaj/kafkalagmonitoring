@@ -46,7 +46,7 @@ public class KafkaApplication {
 	        model.addAttribute("message", message);
 	        model.addAttribute("tasks", tasks);
 
-	        return "welcome"; //view
+	        return "index.html"; //view
 	    }
 	}
 	
