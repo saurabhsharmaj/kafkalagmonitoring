@@ -1,3 +1,9 @@
+mysqldb
+elastic
+
+zoo
+kafka
+-------------------
 
 download Kafka: https://downloads.apache.org/kafka/3.4.0/kafka_2.12-3.4.0.tgz
 Extract and create following batch files:
