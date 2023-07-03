@@ -20,8 +20,8 @@ public class KafkaEntityService {
 	
 	public void save(MultipartFile file) {
 		try {
-			List<KafkaEntity> customer = CSVHelper.csvToKafkaEntity(file.getInputStream());
-			kafkaRepo.saveAll(customer);
+			List<KafkaEntity> kafkaEntity = CSVHelper.csvToKafkaEntity(file.getInputStream());
+			kafkaRepo.saveAll(kafkaEntity);
 		}catch(IOException e) {
 			throw new RuntimeException("fail to store csv data: " + e.getMessage());
 		}
