@@ -1,0 +1,15 @@
+.upload_button{
+    width: 10%;
+    height: 5%;
+    margin-left: -5%;
+}
+
+.sample_button{
+    height: 5%;
+    width: 25%;
+    margin-left: 38%;
+}
+.file_upload{
+    margin-left: 1%;
+    cursor: pointer;
+}

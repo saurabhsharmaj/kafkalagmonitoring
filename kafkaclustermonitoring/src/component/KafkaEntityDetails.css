@@ -15,7 +15,13 @@ body {
     max-width: 100% !important;
   }
   
-
+ .select-monitoring-status{
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+ }
 
   .design-form{
     margin-top: 1%;

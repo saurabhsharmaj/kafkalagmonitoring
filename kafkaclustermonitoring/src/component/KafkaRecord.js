@@ -1,9 +1,10 @@
 import React, {useState,useEffect} from "react";
 import './KafkaRecord.css';
-import NavBar from "./Navbar";
+// import NavBar from "./Navbar";
 import applicationService from '../sevices/application.service';
 import { Link} from 'react-router-dom';
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import NavBar from "./Navbar";
 
 const ClusterInfomation = () => {
 
@@ -24,18 +25,18 @@ const ClusterInfomation = () => {
       init();
     }, []);
 
-    const handleTopic = (clusterid) => {
-        console.log('Printing id', clusterid);
-        if(window.confirm("Do you want to...??")){
-            applicationService.gettopiccluster(clusterid)
-            .then(response => {
-            console.log('printing data', response.data);           
-          })
-          .catch(error => {
-            console.log('Something went wrong', error);
-          })
-        }
-    }    
+    // const handleTopic = (clusterid) => {
+    //     console.log('Printing id', clusterid);
+    //     if(window.confirm("Do you want to...??")){
+    //         applicationService.gettopiccluster(clusterid)
+    //         .then(response => {
+    //         console.log('printing data', response.data);           
+    //       })
+    //       .catch(error => {
+    //         console.log('Something went wrong', error);
+    //       })
+    //     }
+    // }    
     // const handleDelete = (clusterid) => {
     //     console.log('Printing id', clusterid);
     //     if(window.confirm("Do you want to delete...??")){
@@ -100,7 +101,7 @@ const ClusterInfomation = () => {
                                                 {cluster.clustername}
                                                 <Link to={`/gettopicdata/${cluster.clusterid}`}>
                                                     <FaEye className='icon_click' onClick={() => {
-                                                        handleTopic(cluster.clusterid);
+                                                        // handleTopic(cluster.clusterid);
                                                     }}/>
                                                 </Link>                                                    
                                             </td>

@@ -6,6 +6,7 @@ import Clusterinfo from "./component/ClusterInfo";
 import Topiclist from "./component/TopicRecord";
 import AddCluster from "./component/AddCluster";
 import ClusterInfomation from "./component/KafkaRecord";
+import CustomerUploadForm from "./component/KafkaEntityUploadForm";
 
 
 function App(){
@@ -18,8 +19,10 @@ function App(){
             <Route path="/cluster" Component={Clusterinfo}/>
             <Route path="/cluster/edit/:clusterid" Component={Clusterinfo}/>
             <Route path="/topic" Component={Topiclist}/>
-            <Route path="/addcluster" Component={AddCluster}/>          
-            <Route path="/gettopicdata/:id" Component={Topiclist}/>          
+            <Route path ="/kafka/edit/:groupid" Component={KafkaInfo}/>
+            <Route path="/addcluster" Component={AddCluster}/>
+            <Route path="/CustomerUploadForm" Component={CustomerUploadForm}/>   
+            {/* <Route path="/gettopicdata/:id" Component={Topiclist}/>*/}
           </Routes>
         </>
       );

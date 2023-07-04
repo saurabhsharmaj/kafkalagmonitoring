@@ -2,9 +2,10 @@ import React, { useState,useEffect } from 'react';
 //import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
 import './ClusterInfo.css';
-import NavBar from './Navbar';
+// import NavBar from './Navbar';
 import applicationService from '../sevices/application.service';
 import {useNavigate, useParams } from "react-router-dom";
+import NavBar from './Navbar';
 
 const Clusterinfo = () => {
   const [clustername, setClusterName] = useState('');
@@ -46,6 +47,10 @@ const Clusterinfo = () => {
     window.location.href = "/clusterinfo";
   }
 
+  const handleChange = (event) => {
+    setClusterMonitoringStatus(event.target.value);
+  };
+
   useEffect(() => {
     if(clusterid) {
         applicationService.get(clusterid)
@@ -61,7 +66,7 @@ const Clusterinfo = () => {
                 console.log('Something went wrong', error);
             })
     }
- }, [])
+ })
 
   return (
     <>
@@ -85,15 +90,11 @@ const Clusterinfo = () => {
 
             <div className='col-md-3'>
               <label htmlFor='monitoringstatus' >Cluster Monitoring Status</label> 
-              <input
-                type="text"
-                className='form-control' 
-                id="monitoringstatus"
-                value={monitoringstatus}
-                onChange={(e) => setClusterMonitoringStatus(e.target.value)}
-                placeholder="Enter Monitoring Status 0 or 1"
-                required
-              />
+              <select value={monitoringstatus} onChange={handleChange} className="select-monitoring-status">
+                <option value="">Monitoring Status</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+              </select>
             </div>      
 
             <div className='col-md-3'>

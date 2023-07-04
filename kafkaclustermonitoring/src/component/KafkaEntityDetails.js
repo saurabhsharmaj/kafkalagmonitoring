@@ -1,11 +1,13 @@
 import { useState } from "react";
-import {useEffect} from "react";
-import ReactDOM from 'react-dom/client';
-import axios from "axios";
+import { useEffect } from "react";
+//import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import './KafkaEntityDetails.css';
+// import NavBar from "./Navbar";
+import applicationService from '../sevices/application.service';
+import { useParams } from "react-router-dom";
 import NavBar from "./Navbar";
-//import SelectClusterName from "./SelectClusterName";
+import CustomerUploadForm from "./KafkaEntityUploadForm";
 
 
 function KafkaInfo() {
@@ -14,90 +16,136 @@ function KafkaInfo() {
   const [emailid, setEmail] = useState("");
   const [monitoringstatus, setMonitoringStatus] = useState("");
   const [owner, setOwner] = useState("");
-  const [threshold, setThreshold] =useState("");
-  const [topicname, setTopicName] =useState("");
-  const [timestamp, setTimeStamp] =useState("");
-  const [values,setvalues] =useState([])
+  const [threshold, setThreshold] = useState("");
+  const [topicname, setTopicName] = useState("");
+  const [timestamp, setTimeStamp] = useState("");
+  const [cluster, setcluster] = useState([]);
+  let [clusterid, selected] = useState("");
+  const { groupid } = useParams();
 
-  useEffect(()=>{
-    fetch("http://localhost:8081/api/getclustername").then((data)=>data.json()).then((val)=>setvalues(val))
-  },[] )
+  useEffect(() => {
+    fetch('http://localhost:8081/api/getclusterdetails')
+      .then(response => response.json())
+      .then(data => setcluster(data))
+      .catch(error => console.error('Error fetching options:', error));
+  }, []);
+
   const onOptionChangeHandler = (event) => {
-		console.log("User Selected Value - ", event.target.value)
-	}
+    clusterid = event.target.value;
+    selected(event.target.value);
+    console.log("User Selected Value - ", clusterid);
+
+
+  }
+
+  const handleChange = (event) => {
+    setMonitoringStatus(event.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post('http://localhost:8081/api/post/kafka', { consumergroup,description,emailid, monitoringstatus,owner, threshold,topicname,timestamp,values});
-      console.log(response.data);
-
-
-    } catch (error) {
-      console.error(error);
+    const topicInfo = { groupid, consumergroup, description, emailid, monitoringstatus, owner, threshold, topicname, timestamp, clusterid };
+    if (groupid) {
+      //update
+      applicationService.updateKafka(topicInfo)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log('Something went wrong', error);
+        })
     }
-
+    else {
+      //create
+      applicationService.post(topicInfo)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log('something went wroing', error);
+        })
+    }
+    window.location.href = "/topic"
   };
+
+  useEffect(() => {
+    if (groupid) {
+      applicationService.getTopicById(groupid)
+        .then(topicInfo => {
+          setConsumerGroup(topicInfo.data.consumergroup);
+          setDescription(topicInfo.data.description);
+          setEmail(topicInfo.data.emailid);
+          setMonitoringStatus(topicInfo.data.monitoringstatus);
+          setOwner(topicInfo.data.owner);
+          setThreshold(topicInfo.data.threshold);
+          setTimeStamp(topicInfo.data.timestamp);
+          setTopicName(topicInfo.data.topicname);
+          selected(topicInfo.data.clusterid);
+
+        })
+        .catch(error => {
+          console.log('Something went wrong', error);
+        })
+    }
+  });
   return (
     <>
-    <NavBar/>
-    <div className="container col-md-12">
-      <form onSubmit={handleSubmit} className="design-form">
-        <div className="row">
+      <NavBar />
+      <CustomerUploadForm />
+      <div className="container col-md-12">
+        <form onSubmit={handleSubmit} className="design-form">
+          <div className="row">
             {/* <h2>Kafka Details</h2> */}
             <div className="col-md-3">
               <div className="form-group">
                 <label htmlFor="consumergroup" className="form-label">ConsumerGroup</label>
-                  <input
-                    type="text"
-                    className="form-control" 
-                    value={consumergroup}
-                    onChange={(e) => setConsumerGroup(e.target.value)}
-                    placeholder="Enter ConsumerGroup Name"
+                <input
+                  type="text"
+                  className="form-control"
+                  value={consumergroup}
+                  onChange={(e) => setConsumerGroup(e.target.value)}
+                  placeholder="Enter ConsumerGroup Name"
                 />
               </div>
             </div>
 
             <div className="col-md-3">
               <div className="form-group">
-                <label htmlFor="description" className="form-label">Description</label> 
-                  <input
-                    type="text" 
-                    className="form-control"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Description"
+                <label htmlFor="description" className="form-label">Description</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description"
                 />
               </div>
-            </div>   
+            </div>
 
             <div className="col-md-3">
-              <label htmlFor="emailid" className="form-label">Email ID</label> 
+              <label htmlFor="emailid" className="form-label">Email ID</label>
               <input
-                type="email" 
+                type="email"
                 className="form-control"
                 value={emailid}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter Email ID"
-              />   
+              />
             </div>
 
             <div className="col-md-3">
-              <label htmlFor="monitoringstatus" className="form-label">Monitoring Status</label> 
-              <input
-                type="text" 
-                className="form-control"
-                value={monitoringstatus}
-                onChange={(e) => setMonitoringStatus(e.target.value)}
-                placeholder="Monitoring Status 0 or 1"
-              />  
-              <div className="clearfix"></div> 
+              <label htmlFor="monitoringstatus" className="form-label">Monitoring Status</label>
+              <select value={monitoringstatus} onChange={handleChange} className="select-monitoring-status">
+                <option value="">Monitoring Status</option>
+                <option value="1">Yes</option>
+                <option value="2">No</option>
+              </select>
             </div>
 
             <div className="col-md-3 field_margins">
-              <label htmlFor="owner" className="form-label">Owner</label> 
+              <label htmlFor="owner" className="form-label">Owner</label>
               <input
-                type="text" 
+                type="text"
                 className="form-control"
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
@@ -106,9 +154,9 @@ function KafkaInfo() {
             </div>
 
             <div className="col-md-3 field_margins">
-              <label htmlFor="threshold" className="form-label">Threshold Value</label> 
+              <label htmlFor="threshold" className="form-label">Threshold Value</label>
               <input
-                type="text" 
+                type="number"
                 className="form-control"
                 value={threshold}
                 onChange={(e) => setThreshold(e.target.value)}
@@ -117,10 +165,10 @@ function KafkaInfo() {
             </div>
 
             <div className="col-md-3 field_margins">
-              <label htmlFor="topicname" className="form-label">Topic Name</label> 
+              <label htmlFor="topicname" className="form-label">Topic Name</label>
               <input
                 type="text"
-                className="form-control" 
+                className="form-control"
                 value={topicname}
                 onChange={(e) => setTopicName(e.target.value)}
                 placeholder="Enter Topic Name"
@@ -128,10 +176,10 @@ function KafkaInfo() {
             </div>
 
             <div className="col-md-3 field_margins">
-              <label htmlFor="timestamp" className="form-label">Time Stamp</label> 
+              <label htmlFor="timestamp" className="form-label">Time Stamp</label>
               <input
-                type="text"
-                className="form-control" 
+                type="number"
+                className="form-control"
                 value={timestamp}
                 onChange={(e) => setTimeStamp(e.target.value)}
                 placeholder="Enter Time stamp"
@@ -139,25 +187,27 @@ function KafkaInfo() {
             </div>
 
             <div className="col-md-3 field_margins">
-              <label htmlFor="topicname" className="form-label">Select Cluster Name</label> 
-              <select onChange={onOptionChangeHandler} className="form-control">
-              <option>Select Cluster for topic</option>
+              <label htmlFor="clusterid" className="form-label">Select Cluster Name</label>
+              <select value={clusterid} onChange={onOptionChangeHandler} className="form-control">
+                <option>Select Cluster for topic</option>
                 {
-                  values.map((options,i)=><option>
-                    {options}
-                  </option>)
+                  cluster.map(option => (
+                    <option key={option.id} value={option.clusterid}>
+
+                      {option.clustername}
+                    </option>
+                  ))
                 }
+
               </select>
-            </div><br/>
-            <button className="btn btn-primary kafkaEntitySubmit_button" onClick={event =>  window.location.href='http://localhost:3000/topic'}>Submit</button>     
-        </div>
-      </form>
-    </div>
+            </div><br />
+            <button className="btn btn-primary kafkaEntitySubmit_button" >Submit</button>
+          </div>
+        </form>
+      </div>
     </>
   )
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<KafkaInfo />);
 
 export default KafkaInfo
