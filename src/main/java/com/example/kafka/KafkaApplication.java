@@ -25,4 +25,8 @@ public class KafkaApplication {
 //    public LagAnalyzerService getFunnyBean() {
 //        return new LagAnalyzerService();
 //    }
+	
+
+	
+	
 }
