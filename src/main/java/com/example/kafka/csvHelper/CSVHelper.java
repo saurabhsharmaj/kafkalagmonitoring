@@ -16,7 +16,7 @@ import com.example.kafka.entity.KafkaEntity;
 
 public class CSVHelper {
 	public static String TYPE = "text/csv";
-	static String[] header = {"consumergroup","description","emailid","owner","threshold","timestamp","topicname","clusterid","monitoringstatus"};
+	static String[] header = {"consumergroup", "description", "emailid", "owner", "topicname", "threshold", "monitoringstatus", "timestamp", "clusterid"};
 	
 	public static boolean hasCSVFormat(MultipartFile file) {
 		
@@ -26,36 +26,35 @@ public class CSVHelper {
 		return true;
 	}
 	
-	  public static List<KafkaEntity> csvToKafkaEntity(InputStream is) {
+	  public static List<KafkaEntity> csvToKafkaEntities(InputStream is) {
 	    try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 	        CSVParser csvParser = new CSVParser(fileReader,
 	            CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
 
-	      List<KafkaEntity> kafkaEntitys = new ArrayList<KafkaEntity>();
+	      List<KafkaEntity> entities = new ArrayList<KafkaEntity>();
 
 	      Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
 	      for (CSVRecord csvRecord : csvRecords) {
 	    	  KafkaEntity kafkaEntity = new KafkaEntity(
-	              csvRecord.get("consumergroup"),
-	              csvRecord.get("description"),
-	              csvRecord.get("emailid"),
-	              csvRecord.get("owner"),
-	              csvRecord.get("topicname"),
-	              Integer.parseInt(csvRecord.get("threshold")),
-	              Integer.parseInt(csvRecord.get("monitoringstatus")),
-	              Integer.parseInt(csvRecord.get("clusterid")),
-	              Integer.parseInt(csvRecord.get("timestamp"))
+	    			  csvRecord.get("emailid"),
+	    			  csvRecord.get("owner"),
+	    			  csvRecord.get("description"),
+	    			  csvRecord.get("topicname"),
+	    			  csvRecord.get("consumergroup"),
+	    			  Integer.parseInt(csvRecord.get("threshold")),
+	    			  Integer.parseInt(csvRecord.get("monitoringstatus")),
+	    			  Integer.parseInt(csvRecord.get("timestamp")),
+	    			  Integer.parseInt(csvRecord.get("clusterid"))	    			  
 	            );
 
-	    	  kafkaEntitys.add(kafkaEntity);
+	    	  entities.add(kafkaEntity);
 	      }
 
-	      return kafkaEntitys;
+	      return entities;
 	    } 
 	    catch (IOException e) {
 	      throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
 	    }
 	  }
-
 }

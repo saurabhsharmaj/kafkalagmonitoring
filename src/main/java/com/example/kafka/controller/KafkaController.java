@@ -32,7 +32,6 @@ import com.example.kafka.repository.ClusterRepo;
 import com.example.kafka.repository.KafkaRepository;
 
 @CrossOrigin("http://localhost:3000/")
-@RequestMapping("/api")
 @RestController
 @RequestMapping("/api")
 public class KafkaController {
