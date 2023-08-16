@@ -14,12 +14,13 @@ const Clusterinfo = () => {
   const [zookeeper_servers, setZookeeperServer] = useState('');
   const [broker_logs_dir, setBrokerLogsDir] = useState('');
   const [zoo_logs_dir, setZookeeperLogsDir] = useState('');
+  const [kafdropPort, setKafdropPort] = useState('');
   const navigate = useNavigate();
   const {clusterid} = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const clusterInfo = {clusterid, clustername,monitoringstatus,bootstrap_servers,zookeeper_servers,broker_logs_dir,zoo_logs_dir};
+    const clusterInfo = {clusterid, clustername,monitoringstatus,bootstrap_servers,zookeeper_servers,broker_logs_dir,zoo_logs_dir, kafdropPort};
     if(clusterid)
     {
         //update
@@ -61,12 +62,15 @@ const Clusterinfo = () => {
                 setZookeeperLogsDir(clusterInfo.data.zoo_logs_dir);
                 setBootstrapServer(clusterInfo.data.bootstrap_servers);
                 setBrokerLogsDir(clusterInfo.data.broker_logs_dir);
+                setKafdropPort(clusterInfo.data.kafdropPort);
             })
             .catch(error => {
                 console.log('Something went wrong', error);
             })
     }
- })
+    else
+      alert("Invalid Id");
+ },[clusterid])
 
   return (
     <>
@@ -92,8 +96,8 @@ const Clusterinfo = () => {
               <label htmlFor='monitoringstatus' >Cluster Monitoring Status</label> 
               <select value={monitoringstatus} onChange={handleChange} className="select-monitoring-status">
                 <option value="">Monitoring Status</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
+                <option value="1">Enable</option>
+                <option value="0">Disable</option>
               </select>
             </div>      
 
@@ -148,6 +152,19 @@ const Clusterinfo = () => {
                 required
               />
             </div> 
+
+            <div className='col-md-12 field_margins'>
+              <label htmlFor='kafdropPort' >Kafdrop Port</label> 
+              <input
+                type="text"
+                className='form-control' 
+                id="kafdropPort"
+                value={kafdropPort}
+                onChange={(e) => setKafdropPort(e.target.value)}
+                placeholder="Enter your kafdrop port"
+                required
+              />
+            </div>             
 
             <button type="submit" className='btn btn-primary cluster_submit' onClick={(e) => handleSubmit(e)}>Submit</button>
         </div>

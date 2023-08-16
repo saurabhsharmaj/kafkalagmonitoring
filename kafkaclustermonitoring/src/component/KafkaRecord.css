@@ -12,9 +12,25 @@
   
   
   }
+.add-cluster{
+    width: 15%;
+    margin-left: 87%;
+    font-weight: bold;
+    font-size: 18px;
+    text-decoration: none;
+}
 
 .icon_click{
   cursor: pointer;
   margin-top: -4px;
   margin-left: 10px;
+}
+
+.border{
+  border: 1px solid black !important;
+  border-collapse: collapse;
+}
+
+.kafdrop-link{
+  text-decoration: none;
 }

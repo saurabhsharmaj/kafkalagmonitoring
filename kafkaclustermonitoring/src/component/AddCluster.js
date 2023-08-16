@@ -1,5 +1,3 @@
-//import React, { useState } from 'react';
-//import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
 import './ClusterInfo.css';
 import NavBar from './Navbar';
@@ -55,7 +53,7 @@ const AddCluster = () => {
                 console.log('Something went wrong', error);
             })
     }
- }, [])
+ })
 
   return (
     <>

@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #495057;
+    background-color: #27ae89;
     color: #fff;
   }
   
@@ -11,7 +11,12 @@
   
   h2{
     padding: 3px;
-  }
+    font-size: 25px !important;
+    margin-left: 1%;
+    font-weight: bold !important;
+    color: #000;
+}
+
   .nav-links li {
     margin-right: 25px;
     font-weight: bold;
@@ -24,7 +29,7 @@
     margin-right: 20px;
     font-weight: bold;
     font-size: 18px;
-    color: #fff;
+    color: #000;
   }
   
   .nav-links a {
@@ -33,7 +38,7 @@
   }
   
   .nav-links a:hover {
-    color: #ffc107;
+    color: #fff;
   }
 
   .myImage {

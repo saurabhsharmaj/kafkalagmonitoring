@@ -42,4 +42,12 @@ body {
       monospace;
   }
   
-  
+  .bulk-upload{
+    width: 100%;
+    background-color: #2a66a7 !important;
+    text-align: left;
+  }
+
+  .upload{
+    margin-top: 0px !important;
+  }

@@ -8,6 +8,7 @@ const NavBar = () => {
     <>
     <nav className="navbar">
     <h2>Kafka Monitoring Tool</h2>
+      {/* <img src={'http://localhost:3000/kmt-logo.png'}/> */}
       <ul className="nav-links">
         <li>
           <Link to = '/clusterinfo'>Cluster List</Link>
@@ -16,14 +17,14 @@ const NavBar = () => {
         <li>
           <Link to = '/topic'>Topic Record</Link>
         </li>
-
+{/* 
         <li>
           <Link to = '/kafka'>Add Kafka Topic</Link>
-        </li>
+        </li> */}
 
-        <li>
+        {/* <li>
           <Link to = '/cluster'>Add Cluster Information</Link>
-        </li>
+        </li> */}
 
         {/* <li>
           <Link to = '/addcluster'>Cluster Information</Link>

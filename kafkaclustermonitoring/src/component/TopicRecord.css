@@ -1,0 +1,12 @@
+.add-topic{
+    width: 15%;
+    margin-left: 84%;
+    font-weight: bold;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.border-table{
+    border: 1px solid black !important;
+    border-collapse: collapse;
+  }
