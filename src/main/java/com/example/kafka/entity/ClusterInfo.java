@@ -23,7 +23,9 @@ public class ClusterInfo {
 	String bootstrap_servers;
 	String zoo_logs_dir; 
 	String broker_logs_dir;
+	String kafdropPort;
 	
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "clusterid")
 	List<KafkaEntity> kafkaEntity;
@@ -66,19 +68,14 @@ public class ClusterInfo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ClusterInfo(int clusterid, String clustername, int monitoringstatus, String zookeeper_servers,
-			String bootstrap_servers, String zoo_logs_dir, String broker_logs_dir, List<KafkaEntity> kafkaEntity) {
-		super();
-		this.clusterid = clusterid;
-		this.clustername = clustername;
-		this.monitoringstatus = monitoringstatus;
-		this.zookeeper_servers = zookeeper_servers;
-		this.bootstrap_servers = bootstrap_servers;
-		this.zoo_logs_dir = zoo_logs_dir;
-		this.broker_logs_dir = broker_logs_dir;
-		this.kafkaEntity = kafkaEntity;
+	public String getKafdropPort() {
+		return kafdropPort;
 	}
 
+	public void setKafdropPort(String kafdropPort) {
+		this.kafdropPort = kafdropPort;
+	}
+	
 	public String getZookeeper_servers() {
 		return zookeeper_servers;
 	}
@@ -111,12 +108,30 @@ public class ClusterInfo {
 		this.broker_logs_dir = broker_logs_dir;
 	}
 
+	
+	public ClusterInfo(int clusterid, String clustername, int monitoringstatus, String zookeeper_servers,
+			String bootstrap_servers, String zoo_logs_dir, String broker_logs_dir, String kafdropPort,
+			List<KafkaEntity> kafkaEntity) {
+		super();
+		this.clusterid = clusterid;
+		this.clustername = clustername;
+		this.monitoringstatus = monitoringstatus;
+		this.zookeeper_servers = zookeeper_servers;
+		this.bootstrap_servers = bootstrap_servers;
+		this.zoo_logs_dir = zoo_logs_dir;
+		this.broker_logs_dir = broker_logs_dir;
+		this.kafdropPort = kafdropPort;
+		this.kafkaEntity = kafkaEntity;
+	}
+
 	@Override
 	public String toString() {
 		return "ClusterInfo [clusterid=" + clusterid + ", clustername=" + clustername + ", monitoringstatus="
 				+ monitoringstatus + ", zookeeper_servers=" + zookeeper_servers + ", bootstrap_servers="
 				+ bootstrap_servers + ", zoo_logs_dir=" + zoo_logs_dir + ", broker_logs_dir=" + broker_logs_dir
-				+ ", kafkaEntity=" + kafkaEntity + "]";
+				+ ", kafdropPort=" + kafdropPort + ", kafkaEntity=" + kafkaEntity + "]";
 	}
+
+
 
 }

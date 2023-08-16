@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="ISO-8859-1" />
+<title>Kafka Mail alert</title>
+
+<style>
+/* Add inline styles for formatting */
+body {
+	font-family: Arial, sans-serif;
+}
+
+h2{
+	text-align: center;
+}
+.header {
+	background-color: #007bff;
+	color: white;
+	text-align: center;
+	padding: 20px;
+}
+
+.logo {
+	display: block;
+	margin: 0 auto;
+	max-width: 200px;
+	height: auto;
+}
+
+.content {
+	margin: 20px;
+}
+
+.alert {
+	background-color: #f8d7da;
+	border: 1px solid #f5c6cb;
+	color: #721c24;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.lag-table {
+	width: 80%;
+	border-collapse: collapse;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.lag-table th, .lag-table td {
+	padding: 10px;
+	border: 1px solid #ddd;
+}
+
+.footer {
+	background-color: #f0f0f0;
+	text-align: center;
+	padding: 10px;
+}
+</style>
+
+
+</head>
+
+<body>
+	<div class="header">
+		<h1>Kafka Lag Monitoring Alert</h1>
+	</div>
+
+	<div class="content">
+		<div class="alert">
+			<h2>Alert: Kafka Lag Threshold Exceeded</h2>
+			<p>Dear team,</p>
+			<p>This is to inform you that the Kafka lag has exceeded the
+				defined threshold. Immediate action is required to address the
+				issue.</p>
+		</div>
+
+		<h2>Lag Details</h2>
+		<table class="lag-table">
+			<thead>
+				<tr>
+					<th>Cluster Name</th>
+					<th>Topic</th>
+					<th>Threshold value</th>
+					<th>Lag</th>
+					<th>Consumer group</th>
+					<th>Owner</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>			
+					<td ><b th:text="${cn}"></b></td>
+					<td ><b th:text="${tn}"></b></td>
+					<td ><b th:text="${th}"></b></td>
+					<td ><b th:text="${la}"></b></td>
+					<td ><b th:text="${cg}"></b></td>
+					<td ><b th:text="${ow}"></b></td>
+									
+				</tr>
+			</tbody>
+		</table>
+
+		<p>
+			Best regards,<br> Your Kafka Lag Monitoring Team
+		</p>
+	</div>
+	<div class="footer">
+		This is an automated email. Please do not reply.
+	</div>
+</body>
+</html>

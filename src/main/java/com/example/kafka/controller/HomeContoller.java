@@ -12,9 +12,9 @@ public class HomeContoller {
     private String message;
 
    
-
-    @GetMapping("/")
-    public String main(Model model) {
-        return "index.html"; //view
-    }
+//
+//    @GetMapping("/")
+//    public String main(Model model) {
+//        return "index.html"; //view
+//    }
 }

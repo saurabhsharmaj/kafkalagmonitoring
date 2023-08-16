@@ -14,24 +14,34 @@ public class KafkaEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "groupid")
 	int groupid;
+	
 	@Column(name = "emailid")
 	String emailid;
+	
 	@Column(name = "owner")
 	String owner;
+	
 	@Column(name = "description")
 	String description;
+	
 	@Column(name = "topicname")
 	String topicname;
+	
 	@Column(name = "consumergroup")
 	String consumergroup;
+	
 	@Column(name = "threshold")
 	int threshold;
+	
 	@Column(name = "monitoringstatus")
 	int monitoringstatus;
+	
 	@Column(name = "timestamp")
 	int timestamp;
+	
 	@Column(name="clusterid")
 	int clusterid;
+	
 	public int getGroupid() {
 		return groupid;
 	}
