@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.example.kafka.cmd.CommandPromptApplication;
-
 @SpringBootApplication
 @EnableScheduling
 public class KafkaApplication {
@@ -19,13 +18,5 @@ public class KafkaApplication {
 	public CommandPromptApplication getFunnyBean1() {
         return new CommandPromptApplication();
     }
-	
-//	@Bean(initMethod="runAfterObjectCreated")
-//    public LagAnalyzerService getFunnyBean() {
-//        return new LagAnalyzerService();
-//    }
-	
-
-	
 	
 }

@@ -57,20 +57,24 @@ h2{
 	padding: 10px;
 }
 </style>
+
+
 </head>
 
 <body>
 	<div class="header">
 		<h1>Kafka Lag Monitoring Alert</h1>
 	</div>
+
 	<div class="content">
 		<div class="alert">
 			<h2>Alert: Kafka Lag Threshold Exceeded</h2>
 			<p>Dear team,</p>
 			<p>This is to inform you that the Kafka lag has exceeded the
-			defined threshold. Immediate action is required to address the
-			issue.</p>
+				defined threshold. Immediate action is required to address the
+				issue.</p>
 		</div>
+
 		<h2>Lag Details</h2>
 		<table class="lag-table">
 			<thead>
@@ -82,16 +86,39 @@ h2{
 					<th>Consumer group</th>
 					<th>Owner</th>
 				</tr>
-				<tr>
-					<th>{ClusterName}</th>
-					<th>{TopicName}</th>
-					<th>{threshold}</th>
-					<th>{lags}</th>
-					<th>{ConsumerGroup}</th>
-					<th>{Owner}</th>
-				</tr>				
 			</thead>
-		</table>		    	
+			<tbody>
+				<tr>	<td ><b th:text="${threshold}"></b></td>
+				
+						
+					<td><p th:text="${clusterName}"></p></td>
+					<td ><b th:text="${TopicName}"></b></td>
+					<td ><b th:text="${threshold}"></b></td>
+					<td ><b th:text="${lags}"></b></td>
+					<td ><b th:text="${ConsumerGroup}"></b></td>
+					<td ><b th:text="${Owner}"></b></td>
+									
+				</tr>
+				
+				
+    			<tr th:each="entity : ${entities}">
+     			<td th:text="${entity.threshold}"></td>
+    		 	<td th:text="${entity.topicname}"></td>
+   			 	 <td th:text="${instructor.email}"></td>
+   				 </tr>
+   				</tbody>
+		</table>
+		
+		
+        <p th:each="entity : ${entities}" th:text="${entity.threshold}">hello</p>
+    
+
+		<p th:with="data=${'This is the data from the service.'}" th:text="${data}">Default Data</p>
+		<h1>Data from Service:</h1>
+    	<p th:text="${data}">Default Data</p>
+    	
+    	
+    	
 		<p>
 			Best regards,<br> Your Kafka Lag Monitoring Team
 		</p>

@@ -37,13 +37,13 @@ public class LiveLagAnalyzerService {
 			lagAnalyzerService.pData(topics.get(i),clusters.get(i),servers.get(i));
 	}
 	
-//	@Scheduled(fixedDelay = 5000L)
-//	public void consumerData() throws ExecutionException, InterruptedException {
-//		List<String> topics = kafkarepository.getAllTopicNamesByMonitoringStatus();
-//		List<String> groupIds = kafkarepository.getAllGroupNamesByMonitoringStatus();
-//		List<String> clusters = kafkarepository.getAllClusterNamesByMonitoringStatus();
-//		List<String> servers = kafkarepository.getAllBootstrapServersByMonitoringStatus();
-//		for(int i = 0; i<topics.size(); i++)
-//			lagAnalyzerService.cData(Arrays.asList(topics.get(i)),groupIds.get(i),clusters.get(i),servers.get(i));
-//	}
+	@Scheduled(fixedDelay = 5000L)
+	public void consumerData() throws ExecutionException, InterruptedException {
+		List<String> topics = kafkarepository.getAllTopicNamesByMonitoringStatus();
+		List<String> groupIds = kafkarepository.getAllGroupNamesByMonitoringStatus();
+		List<String> clusters = kafkarepository.getAllClusterNamesByMonitoringStatus();
+		List<String> servers = kafkarepository.getAllBootstrapServersByMonitoringStatus();
+		for(int i = 0; i<topics.size(); i++)
+			lagAnalyzerService.cData(Arrays.asList(topics.get(i)),groupIds.get(i),clusters.get(i),servers.get(i));
+	}
 }

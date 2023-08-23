@@ -108,7 +108,7 @@ public class LagAnalyzerService {
 
 			int noOfMinutes = (minutes - kafkaEntity.getTimestamp());
 			
-			if(lag>=kafkaEntity.getThreshold() && (noOfMinutes == 3 || noOfMinutes == 0 || (kafkaEntity.getTimestamp() == -1)))
+			if(lag>=kafkaEntity.getThreshold() && (noOfMinutes == 3 || noOfMinutes != 0 || (kafkaEntity.getTimestamp() == -1)))
  			{
  				sendmailbygmail.sendMail(kafkaEntity,lag,clusterName);
  				int timestamp = Integer.parseInt(DateTimeFormatter.ofPattern("mm").format(LocalTime.now()));
