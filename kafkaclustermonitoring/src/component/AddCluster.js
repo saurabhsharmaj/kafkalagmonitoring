@@ -75,7 +75,7 @@ const AddCluster = () => {
               />
             </div>        
   
-            {/* <button type="submit" className='btn btn-primary cluster_submit' onClick={event =>  window.location.href='http://localhost:3000/kafkalist'}>Submit</button> */}
+            {/* <button type="submit" className='btn btn-primary cluster_submit' onClick={event =>  window.location.href='http://192.168.1.30:3000/kafkalist'}>Submit</button> */}
             <button onClick={(e) => handleSubmit(e)} className="btn btn-primary kafkaEntitySubmit_button">Save</button>
         </div>
       </form>      

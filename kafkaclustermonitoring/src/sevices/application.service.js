@@ -44,6 +44,8 @@ const remove = id => {
 const removetopic = id => {
     return httpClient.delete(`/deletetopic/${id}`);
 }
-
+const apis={
+    getAll, remove, update, create, get, getTopicById, gettopiccluster, post, removetopic, updateKafka, getTopic,
+};
 // export default { getAll, create, get, update, remove };
-export default { getAll, remove, update, create, get, getTopicById, gettopiccluster, post, removetopic, updateKafka, getTopic};
+export default apis

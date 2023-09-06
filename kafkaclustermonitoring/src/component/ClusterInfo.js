@@ -1,11 +1,10 @@
 import React, { useState,useEffect } from 'react';
-//import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
 import './ClusterInfo.css';
-// import NavBar from './Navbar';
 import applicationService from '../sevices/application.service';
 import {useNavigate, useParams } from "react-router-dom";
-import NavBar from './Navbar';
+
+import TopHeader from './Header';
 
 const Clusterinfo = () => {
   const [clustername, setClusterName] = useState('');
@@ -68,13 +67,11 @@ const Clusterinfo = () => {
                 console.log('Something went wrong', error);
             })
     }
-    else
-      alert("Invalid Id");
  },[clusterid])
 
   return (
     <>
-    <NavBar/>
+    <TopHeader/>
     <div className="container col-md-12">
       <form className='form-design'>
         <div className='row'>

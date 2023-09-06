@@ -22,7 +22,7 @@ function App(){
             <Route path ="/kafka/edit/:groupid" Component={KafkaInfo}/>
             <Route path="/addcluster" Component={AddCluster}/>
             <Route path="/CustomerUploadForm" Component={CustomerUploadForm}/>   
-            <Route path="http://localhost:8081/api/gettopicdata/:id" Component={Topiclist}/>
+            <Route path="api/gettopicdata/:id" Component={Topiclist}/>
           </Routes>
         </>
       );

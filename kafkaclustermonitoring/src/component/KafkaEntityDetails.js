@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useEffect } from "react";
-//import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import './KafkaEntityDetails.css';
-// import NavBar from "./Navbar";
 import applicationService from '../sevices/application.service';
 import { useParams } from "react-router-dom";
-import NavBar from "./Navbar";
 import CustomerUploadForm from "./KafkaEntityUploadForm";
+import TopHeader from "./Header";
 
 
 function KafkaInfo() {
@@ -24,11 +22,11 @@ function KafkaInfo() {
   const { groupid } = useParams();
 
   useEffect(() => {
-    fetch('http://localhost:8081/api/getclusterdetails')
+    fetch('api/getclusterdetails')
       .then(response => response.json())
       .then(data => setcluster(data))
       .catch(error => console.error('Error fetching options:', error));
-  },[]);
+  });
 
   const onOptionChangeHandler = (event) => {
     clusterid = event.target.value;
@@ -90,7 +88,7 @@ function KafkaInfo() {
   },[groupid]);
   return (
     <>
-      <NavBar />
+      <TopHeader/>
       <div className="container mt-3">
         <button type="button" className="btn btn-primary bulk-upload" data-bs-toggle="collapse" data-bs-target="#demo1">Bulk Upload Kafka Topic Details</button>
         <div id="demo1" className="collapse">

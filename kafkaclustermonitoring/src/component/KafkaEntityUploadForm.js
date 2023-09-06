@@ -16,7 +16,7 @@ const CustomerUploadForm = () => {
       formData.append('file', selectedFile);
   
       axios
-        .post('http://localhost:8081/api/uploadfile', formData, {
+        .post('api/uploadfile', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

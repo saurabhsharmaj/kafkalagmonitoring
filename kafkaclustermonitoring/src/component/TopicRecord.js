@@ -1,132 +1,143 @@
 import React, { useEffect, useState } from 'react';
 import './TopicRecord.css';
-// import NavBar from "./Navbar";
 import { Link} from 'react-router-dom';
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { FaTrash ,FaEdit, FaPlus} from "react-icons/fa";
+import DataTable from 'react-data-table-component';
 import applicationService from '../sevices/application.service';
-//import axios from 'axios';
-import NavBar from './Navbar';
+import TopHeader from './Header';
 
 const TopicList = () => {
 
     const [TopicRecord, setTopicRecord] = useState([]);
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState([]);
   
-//    const params = useParams();
+    // const getTopics = async() =>{
+    //     try{
+    //         const response = await axios.get(applicationService.getTopic());
+    //         setTopicRecord(response);
+    //     }catch(error){
+    //         console.log(error);
+    //     }
+    // };
     
-    const init = clusterid => {
+
+    const getTopics = async() => {
       applicationService.getTopic()
         .then(response => {
           console.log('Printing Topic data', response.data);
           setTopicRecord(response.data);
+          setFilter(response.data);
         })
         .catch(error => {
           console.log('Something went wrong', error);
         }) 
     }
-  
+
+    const column =[
+        {
+            name: "S no.",
+            selector: (row,index)=> index+1, 
+            sortable: true                 
+        },
+        {
+            name: "Consumer Group",
+            selector: (row) => row.consumergroup,
+            sortable: true,
+        },
+        {
+            name: "Topic Name",
+            selector: (row) => row.topicname
+        },
+        {
+            name: "Owner",
+            selector: (row) => row.owner
+        },
+        {
+            name: "Email Id",
+            selector: (row) => row.emailid,
+            
+        },
+        {
+            name: "Monitoring Status",
+            selector: (row) => row.monitoringstatus
+        },
+        {
+            name: "Threshold value",
+            selector: (row) => row.threshold,
+            sortable: true
+        },
+        {
+            name: "Description",
+            selector: (row) => row.description
+        },
+        {
+            name: "Edit",
+            cell: (row) => (
+                <Link to={`/kafka/edit/${row.groupid}`}>
+                    <FaEdit className='icon_click'/>
+                </Link>                
+            )
+        },        
+        {
+            name: "Update",
+            cell: (row) => (
+                <Link to>
+                <FaTrash className='icon_click' onClick={() => {
+                    handleDelete(row.groupid);
+                    }}/>
+                </Link>
+            )
+        }        
+        
+    ]
     useEffect(() => {
-      init();
+      getTopics();
     }, []);
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //       try {
-    //             await axios.get(applicationService.gettopiccluster(`${params.id}`))
-    //         .then(res => {
-    //                      console.log(res)
-    //                      setTopicRecord(res.data)
-    //         })
-    //         // Process the response data
-    //       } catch (error) {
-
-    //         console.log(error.config); // Config used to make the request
-    //       }
-    //     };
     
-    //     fetchData();
-    //   }, [params.id])
-
-    // useEffect(()=> {
-    //     axios.get(applicationService.gettopiccluster(`${params.id}`))
-    //     .then(res => {
-    //         console.log(res)
-    //         setTopicRecord(res.data)
-    //     })
-    //     .catch(err =>{
-    //         console.log(err)
-    //     })
-    // }, [params.id])
-
+    useEffect(()=>{
+        const result = TopicRecord.filter(topics => {
+            return topics.topicname.toLowerCase().match(search.toLowerCase());
+        });
+        setFilter(result);
+    },[TopicRecord,search]);
+    
     const handleDelete = (groupid) => {
         console.log('Printing id', groupid);
         if(window.confirm("Do you want to delete...??")){
             applicationService.removetopic(groupid)
             .then(response => {
             console.log(response.data);
-            init();            
+            getTopics();            
           })
           .catch(error => {
             console.log('Something went wrong', error);
           })
         }
     }
-    
+
     return(
         <>
-        <NavBar/>
-            <div className="container">
-                <div className="row">
-               
-                  <table className="table border-table">
-                      <thead>
-                          <tr>
-                              <th>ID</th>                                
-                              <th>Consumer Group</th>  
-                              <th>Topic Name</th>
-                              <th>Owner</th>                              
-                              <th>Email Id</th>                                
-                              <th>Monitoring Status</th>                                
-                              <th>Threshold Value</th>                                
-                              <th>Timestamp</th>                                
-                              <th>Description</th>                                        
-                              <th>Action</th>
-                          </tr>
-                      </thead>
-
-                      <tbody>
-                          {
-                              TopicRecord.map(topic => (
-                                  <tr key={topic.groupid}>
-                                      <td>
-                                          {topic.groupid}
-                                          <Link to={`/kafka/edit/${topic.groupid}`}>
-                                              <FaEdit className='icon_click'/>
-                                          </Link>      
-                                      </td>
-                                      <td>{topic.consumergroup}</td>
-                                      <td>{topic.topicname}</td>
-                                      <td>{topic.owner}</td>
-                                      <td>{topic.emailid}</td>
-                                      <td>{(topic.monitoringstatus === 1) ? "Enable" : "Disable"}</td>
-                                      <td>{topic.threshold}</td>
-                                      <td>{topic.timestamp}</td>
-                                      <td>{topic.description}</td>
-                                      <td>
-                                          <Link to>
-                                          <FaTrash className='icon_click' onClick={() => {
-                                              handleDelete(topic.groupid);
-                                              }}/>
-                                          </Link>
-                                      </td>
-                                  </tr>
-                              ))
-                          }                                   
-                      </tbody>
-                  </table>
-                  <Link to = '/Kafka' className='add-topic'><FaPlus/>Add Kafka Topic</Link>
-                </div>
-            </div>
-
+        <TopHeader/>
+        <DataTable 
+        className='topic-list'
+        title="Topic List"        
+        columns={column} 
+        data={filter} 
+        pagination
+        fixedHeader
+        highlightOnHover
+        subHeader
+        subHeaderComponent={
+            <input type = "text"
+            placeholder='search by topic name'
+            className="w-25 form-control"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            />
+        }
+        />
+        <Link to = '/kafka' className='add-cluster'><FaPlus/>Add Topic</Link>
         </>
     )
 }

@@ -4,7 +4,7 @@ import './KafkaRecord.css';
 import applicationService from '../sevices/application.service';
 import { Link} from 'react-router-dom';
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import NavBar from "./Navbar";
+import TopHeader from "./Header";
 
 const ClusterInfomation = () => {
 
@@ -67,7 +67,7 @@ const ClusterInfomation = () => {
 
     return(
         <>
-        <NavBar/>
+        <TopHeader/>
         <React.Fragment>
 
             <div className="container">
@@ -100,7 +100,7 @@ const ClusterInfomation = () => {
                                         <td>
                                         
                                             <Link to = {`http://${cluster.kafdropPort}`} className="kafdrop-link" target="_blank">{cluster.clustername}</Link>
-                                            {/* <Link to={`http://localhost:8081/api/gettopicdata/${cluster.clusterid}`}>
+                                            {/* <Link to={`http://192.168.1.30:8081/api/gettopicdata/${cluster.clusterid}`}>
                                                 <FaEye className='icon_click' onClick={() => {
                                                     // handleTopic(cluster.clusterid);
                                                 }}/>
