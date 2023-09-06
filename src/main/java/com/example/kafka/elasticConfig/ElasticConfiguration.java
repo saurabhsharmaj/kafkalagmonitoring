@@ -17,7 +17,7 @@ public class ElasticConfiguration {
 	@Bean
 	public RestHighLevelClient elasticsearchClient() {
 
-		final ClientConfiguration clientConfiguration = ClientConfiguration.builder().connectedTo("localhost:9200")
+		final ClientConfiguration clientConfiguration = ClientConfiguration.builder().connectedTo("192.168.1.30:9200")
 				.build();
 
 		return RestClients.create(clientConfiguration).rest();
