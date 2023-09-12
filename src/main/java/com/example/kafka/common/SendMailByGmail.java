@@ -1,4 +1,4 @@
-package com.example.kafka.mail;
+package com.example.kafka.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +24,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 //import com.example.kafka.MyService;
-import com.example.kafka.entity.KafkaEntity;
+import com.example.kafka.entity.TopicInfoEntity;
 
 @Service
 public class SendMailByGmail {
@@ -36,7 +36,7 @@ public class SendMailByGmail {
 	@Value("${user.password.config}")
 	String password;
 
-	public void sendMail(KafkaEntity kafkaEntity, Long lag, String clusterName) {
+	public void sendMail(TopicInfoEntity kafkaEntity, Long lag, String clusterName) {
 
 		String host = "smtp.gmail.com";
 		String port = "587";
@@ -97,7 +97,7 @@ public class SendMailByGmail {
 
 	}
 
-	public String generateEmailContent(List<KafkaEntity> entities) {
+	public String generateEmailContent(List<TopicInfoEntity> entities) {
 		Context context = new Context();
 		context.setVariable("entities", entities);
 		return templateEngine.process("email-template", context);

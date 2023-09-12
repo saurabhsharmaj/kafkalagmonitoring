@@ -1,3 +1,4 @@
+package com.example.kafka.common;
 //package com.example.kafka.cmd;
 //
 //import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package com.example.kafka.csvHelper;
+package com.example.kafka.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.kafka.entity.KafkaEntity;
+import com.example.kafka.entity.TopicInfoEntity;
 
 public class CSVHelper {
 	public static String TYPE = "text/csv";
@@ -26,17 +26,17 @@ public class CSVHelper {
 		return true;
 	}
 	
-	  public static List<KafkaEntity> csvToKafkaEntities(InputStream is) {
+	  public static List<TopicInfoEntity> csvToKafkaEntities(InputStream is) {
 	    try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 	        CSVParser csvParser = new CSVParser(fileReader,
 	            CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
 
-	      List<KafkaEntity> entities = new ArrayList<KafkaEntity>();
+	      List<TopicInfoEntity> entities = new ArrayList<TopicInfoEntity>();
 
 	      Iterable<CSVRecord> csvRecords = csvParser.getRecords();
 
 	      for (CSVRecord csvRecord : csvRecords) {
-	    	  KafkaEntity kafkaEntity = new KafkaEntity(
+	    	  TopicInfoEntity kafkaEntity = new TopicInfoEntity(
 	    			  csvRecord.get("emailid"),
 	    			  csvRecord.get("owner"),
 	    			  csvRecord.get("description"),

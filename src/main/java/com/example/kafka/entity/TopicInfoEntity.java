@@ -8,124 +8,144 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "kafkalagmonitoring")
-public class KafkaEntity {
+@Table(name = "topic_info")
+public class TopicInfoEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "groupid")
-	int groupid;
-	
+	private int groupId;
+
 	@Column(name = "emailid")
-	String emailid;
-	
+	String emailId;
+
 	@Column(name = "owner")
 	String owner;
-	
+
 	@Column(name = "description")
 	String description;
-	
+
 	@Column(name = "topicname")
-	String topicname;
-	
+	String topicName;
+
 	@Column(name = "consumergroup")
-	String consumergroup;
-	
+	String consumerGroup;
+
 	@Column(name = "threshold")
 	int threshold;
-	
+
 	@Column(name = "monitoringstatus")
-	int monitoringstatus;
-	
+	int monitoringStatus;
+
 	@Column(name = "timestamp")
 	int timestamp;
-	
-	@Column(name="clusterid")
-	int clusterid;
-	
+
+	@Column(name = "clusterid")
+	int clusterId;
+
 	public int getGroupid() {
-		return groupid;
+		return groupId;
 	}
+
 	public void setGroupid(int groupid) {
-		this.groupid = groupid;
+		this.groupId = groupid;
 	}
+
 	public String getEmailid() {
-		return emailid;
+		return emailId;
 	}
+
 	public void setEmailid(String emailid) {
-		this.emailid = emailid;
+		this.emailId = emailid;
 	}
+
 	public String getOwner() {
 		return owner;
 	}
+
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getTopicname() {
-		return topicname;
+		return topicName;
 	}
+
 	public void setTopicname(String topicname) {
-		this.topicname = topicname;
+		this.topicName = topicname;
 	}
+
 	public String getConsumergroup() {
-		return consumergroup;
+		return consumerGroup;
 	}
+
 	public void setConsumergroup(String consumergroup) {
-		this.consumergroup = consumergroup;
+		this.consumerGroup = consumergroup;
 	}
+
 	public int getThreshold() {
 		return threshold;
 	}
+
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
+
 	public int getMonitoringstatus() {
-		return monitoringstatus;
+		return monitoringStatus;
 	}
+
 	public void setMonitoringstatus(int monitoringstatus) {
-		this.monitoringstatus = monitoringstatus;
+		this.monitoringStatus = monitoringstatus;
 	}
+
 	public int getTimestamp() {
 		return timestamp;
 	}
+
 	public void setTimestamp(int timestamp) {
 		this.timestamp = timestamp;
 	}
+
 	public int getClusterid() {
-		return clusterid;
-	}
-	public void setClusterid(int clusterid) {
-		this.clusterid = clusterid;
-	}
-	public KafkaEntity(String emailid, String owner, String description, String topicname,
-			String consumergroup, int threshold, int monitoringstatus, int timestamp, int clusterid) {
-		super();
-		this.emailid = emailid;
-		this.owner = owner;
-		this.description = description;
-		this.topicname = topicname;
-		this.consumergroup = consumergroup;
-		this.threshold = threshold;
-		this.monitoringstatus = monitoringstatus;
-		this.timestamp = timestamp;
-		this.clusterid = clusterid;
+		return clusterId;
 	}
 
-	public KafkaEntity() {
-		
+	public void setClusterid(int clusterid) {
+		this.clusterId = clusterid;
 	}
+
+	public TopicInfoEntity(String emailid, String owner, String description, String topicname, String consumergroup,
+			int threshold, int monitoringstatus, int timestamp, int clusterid) {
+		super();
+		this.emailId = emailid;
+		this.owner = owner;
+		this.description = description;
+		this.topicName = topicname;
+		this.consumerGroup = consumergroup;
+		this.threshold = threshold;
+		this.monitoringStatus = monitoringstatus;
+		this.timestamp = timestamp;
+		this.clusterId = clusterid;
+	}
+
+	public TopicInfoEntity() {
+
+	}
+
 	@Override
 	public String toString() {
-		return "KafkaEntity [groupid=" + groupid + ", emailid=" + emailid + ", owner=" + owner + ", description="
-				+ description + ", topicname=" + topicname + ", consumergroup=" + consumergroup + ", threshold="
-				+ threshold + ", monitoringstatus=" + monitoringstatus + ", timestamp=" + timestamp + ", clusterid="
-				+ clusterid + "]";
+		return "KafkaEntity [groupid=" + groupId + ", emailid=" + emailId + ", owner=" + owner + ", description="
+				+ description + ", topicname=" + topicName + ", consumergroup=" + consumerGroup + ", threshold="
+				+ threshold + ", monitoringstatus=" + monitoringStatus + ", timestamp=" + timestamp + ", clusterid="
+				+ clusterId + "]";
 	}
-	
-	
+
 }

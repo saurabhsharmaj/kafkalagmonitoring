@@ -1,4 +1,4 @@
-package com.example.kafka.elasticConfig;
+package com.example.kafka.Config;
 
 import java.util.ArrayList;
 import java.util.Collection;

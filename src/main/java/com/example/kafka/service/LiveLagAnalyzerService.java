@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.example.kafka.repository.KafkaRepository;
+import com.example.kafka.repository.TopicInfoEntityRepository;
 
 @Service
 public class LiveLagAnalyzerService {
@@ -17,7 +17,7 @@ public class LiveLagAnalyzerService {
 	private LagAnalyzerService lagAnalyzerService;
 
 	@Autowired
-	private KafkaRepository kafkarepository;
+	private TopicInfoEntityRepository kafkarepository;
 
 	@Scheduled(fixedDelay = 5000L)
 	public void liveLagAnalysis() throws ExecutionException, InterruptedException {

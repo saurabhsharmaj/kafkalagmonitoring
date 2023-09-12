@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -30,12 +31,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.kafka.entity.ElasticEntity;
-import com.example.kafka.entity.KafkaEntity;
-import com.example.kafka.mail.SendMailByGmail;
+import com.example.kafka.common.MonitoringUtil;
+import com.example.kafka.common.SendMailByGmail;
+import com.example.kafka.entity.ElasticDocumentEntity;
+import com.example.kafka.entity.TopicInfoEntity;
 import com.example.kafka.repository.ClusterRepo;
 import com.example.kafka.repository.ElasticRepo;
-import com.example.kafka.repository.KafkaRepository;
+import com.example.kafka.repository.TopicInfoEntityRepository;
 
 @Service
 @Transactional
@@ -43,7 +45,7 @@ public class LagAnalyzerService {
 	Logger LOGGER = LoggerFactory.getLogger(LagAnalyzerService.class);
 
 	@Autowired
-	KafkaRepository kafkarepository;
+	TopicInfoEntityRepository kafkarepository;
 	
 	@Autowired
 	ClusterRepo clusterRepo;
@@ -60,11 +62,13 @@ public class LagAnalyzerService {
     
     private void runAfterObjectCreated()
     {
-    	List<String> topic = kafkarepository.getAllTopicNames();
+    	List<TopicInfoEntity> topicData = kafkarepository.findAll();
+    	
+    	List<String> topic = topicData.stream().map(TopicInfoEntity::getTopicname).collect(Collectors.toList());
     	List<String> servers = kafkarepository.getAllBootstrapServers();
 		for(int i=0;i<topic.size();i++)
 		{
-			KafkaEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic.get(i), servers.get(i));
+			TopicInfoEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic.get(i), servers.get(i));
 			kafkaEntity.setTimestamp(-1);
 			kafkarepository.save(kafkaEntity);
 		}
@@ -99,10 +103,10 @@ public class LagAnalyzerService {
 			int partition = lagEntry.getKey().partition();
 			Long lag = lagEntry.getValue();
 			String clustername = clusterRepo.clusterElastic(topic);
-			ElasticEntity elasticEntity = new ElasticEntity(id, topic, partition, lag, clustername);
+			ElasticDocumentEntity elasticEntity = new ElasticDocumentEntity(id, topic, partition, lag, clustername);
 			elasticRepo.save(elasticEntity);
 			
-			KafkaEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic, bootstrapServer);
+			TopicInfoEntity kafkaEntity = kafkarepository.FindTopicDetailsByTopicNameAndBootStrapServer(topic, bootstrapServer);
 			System.out.println(kafkaEntity.getTopicname()+" "+kafkaEntity.getTimestamp());
 			int minutes = Integer.parseInt(DateTimeFormatter.ofPattern("mm").format(LocalTime.now()));
 

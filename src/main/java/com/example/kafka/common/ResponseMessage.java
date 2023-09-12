@@ -1,4 +1,4 @@
-package com.example.kafka.message;
+package com.example.kafka.common;
 
 public class ResponseMessage {
 

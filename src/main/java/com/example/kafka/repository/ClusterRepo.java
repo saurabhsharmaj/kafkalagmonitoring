@@ -15,12 +15,9 @@ import com.example.kafka.entity.ClusterInfo;
 public interface ClusterRepo extends JpaRepository<ClusterInfo, Integer> {
 
 	@Transactional
-	@Query(value="SELECT c.clustername FROM cluster_info c LEFT JOIN kafkalagmonitoring k ON c.clusterid = k.clusterid WHERE k.topicname = :topic ",nativeQuery = true)	
+	@Query(value="SELECT c.cluster_name FROM cluster_info c LEFT JOIN topic_info k ON c.cluster_id = k.clusterid WHERE k.topicname = :topic ",nativeQuery = true)	
 	String clusterElastic(@Param("topic") String topic);
-	
-	@Query(value = "SELECT clustername FROM cluster_info ;",nativeQuery=true)
-	List<String> getAllClusterNameReact();
-	
-	@Query(value = "SELECT c.clustername FROM cluster_info c left join kafkalagmonitoring k on c.clusterid = k.clusterid WHERE c.clusterid = k.clusterid;;",nativeQuery=true)
+		
+	@Query(value = "SELECT c.cluster_name FROM cluster_info c left join topic_info k on c.cluster_id = k.clusterid WHERE c.cluster_id = k.clusterid;",nativeQuery=true)
 	List<String> getKafkaClusterName();
 }

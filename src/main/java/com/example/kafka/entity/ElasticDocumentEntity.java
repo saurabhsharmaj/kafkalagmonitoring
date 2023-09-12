@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 @Document(indexName = "laganalyzer")
-public class ElasticEntity {
+public class ElasticDocumentEntity {
 
 	@Id
 	private int id;
@@ -59,7 +59,7 @@ public class ElasticEntity {
 		this.clustername = clustername;
 	}
 
-	public ElasticEntity(int id, String topic, int partition, long lags, String clustername) {
+	public ElasticDocumentEntity(int id, String topic, int partition, long lags, String clustername) {
 		super();
 		this.id = id;
 		this.topic = topic;
